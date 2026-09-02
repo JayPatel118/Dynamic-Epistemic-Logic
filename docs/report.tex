@@ -1,0 +1,66 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath, amssymb, amsthm}
+\newtheorem{lemma}{Lemma}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{geometry}
+\usepackage{svg}
+\usepackage{float}
+\usepackage{subfigure}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{algorithm, algpseudocode}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\geometry{margin=1in}
+
+\title{COL750 Assignment-2}
+\author{PATEL JAY PRAKASHBHAI (2021CS50617)}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\newcommand{\krip}[1]{%
+    \if\relax\detokenize{#1}\relax
+        \( M = \langle S, \sim, V \rangle \)%
+    \else
+        % Argument given
+        \( M|_{\phi_{#1}} = \langle S^{(#1)}, \sim^{(#1)}, V^{(#1)} \rangle \)%
+    \fi
+}
+\newcommand{\lr}[2]{%
+    \forall l \in \{#2\}^{#1-1},
+    \forall r \in \{#2\}^{n-#1}%
+}
+\newcommand{\lrc}[1]{%
+    \forall l \in \{0,1\}^{\the\numexpr#1-1\relax},
+    \forall r \in \{0,1\}^{n-#1}%
+}
+\newcommand{\an}{%
+    \bigvee\limits_{i=1}^{n} 1_{ci}
+}
+\newcommand{\ani}[1]{%
+    \bigwedge\limits_{#1=1}^{n} \neg K_{c#1}1_{c#1} \land \neg K_{c#1}0_{c#1}
+}
+\newcommand{\eq}[1]{%
+    \eqref{eq:#1}
+}
+\newcommand{\hl}[1]{%
+    \noindent\rule{\textwidth}{#1pt}
+}
+
+\section*{\underline{Part-1}}
+
+\input{1_1.tex}
+\input{1_2.tex}
+\input{1_3.tex}
+
+\hl{1}
+
+\section*{\underline{Part-2}}
+\input{2_1.tex}
+
+\end{document}

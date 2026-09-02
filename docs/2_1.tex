@@ -1,0 +1,327 @@
+\subsection*{Problem 2.1}
+
+\subsubsection*{(a)}
+
+Both frameworks implement \textbf{Dynamic Epistemic Logic (DEL)}. 
+They start with an epistemic model (a Kripke structure) 
+representing the agents’ knowledge and then update it when events occur. 
+The differences lie in the kinds of events they support and the 
+underlying data structures.
+
+\paragraph*{\texttt{demo\_s5} – Public announcements only}
+
+\subparagraph*{Representation.}
+\begin{itemize}
+    \item \textbf{States:} any hashable objects (e.g., tuples, integers).
+    \item \textbf{Agents:} identified by integers (e.g., $a=0$, $b=1$).
+    \item \textbf{Valuation:} a mapping from states to a set 
+    of propositional atoms. The logic is \textbf{2‑valued} 
+    (True/False) – every proposition is either true or false at every world.
+    \item \textbf{Accessibility:} stored as \textbf{partitions} 
+    (equivalence relations). For each agent, a list of blocks 
+    (each block is a list of states). 
+    This enforces S5 properties (reflexive, transitive, symmetric).
+    \item \textbf{Formulas:} \texttt{Top}, \texttt{Info(world)} 
+    (true only at that world), \texttt{Ng} (negation), 
+    \texttt{Conj}, \texttt{Disj}, \texttt{Kn(agent,form)} (knowledge).
+\end{itemize}
+
+\subparagraph*{Event handling.}
+Only \textbf{public announcements} are supported via \\ 
+the function \texttt{upd\_pa(model, form)}. It:
+\begin{enumerate}
+    \item Keeps only those states where 
+    the announced formula is true.
+    \item Restricts each agent’s partition to the remaining 
+    states (drops worlds and updates blocks).
+    \item Keeps only actual worlds that survive.
+\end{enumerate}
+No other actions (private messages, factual changes, etc.) 
+can be expressed.
+
+\subparagraph*{{Solving a DEL problem.}}
+In \texttt{demo\_s5}, the initial epistemic model 
+$M$ must be \textbf{explicitly constructed} to encode 
+all relevant information of the puzzle. 
+For Cheryl’s birthday, $M$ contains exactly the ten 
+candidate dates, with Albert’s relation grouping 
+by month and Bernard’s relation grouping by day. 
+The actual world is chosen from among these states. 
+There is no way to “set” the real situation later – 
+everything is given into the initial model.
+A DEL problem in this framework is specified by:
+\begin{enumerate}
+    \item An initial epistemic model $M$ (
+        states, partitions for each agent, valuation, actual worlds).
+    \item A sequence of public announcements $\phi_1, \phi_2, \dots, \phi_n$.
+\end{enumerate}
+The solution proceeds by repeatedly applying \texttt{upd\_pa}:
+\[
+M^{(0)} = M,\qquad M^{(i+1)} = \texttt{upd\_pa}(M^{(i)}, \phi_{i+1}).
+\]
+After each announcement, the model shrinks: 
+worlds where the announced formula is false disappear. 
+The final model $M_n$ contains exactly 
+those worlds that are consistent with all announcements. 
+If the puzzle asks “what is the real world?” (e.g., Cheryl’s birthday), 
+the answer is the unique actual world in $M_n$ (if exactly one remains). 
+If the puzzle asks “does agent $a$ know $\psi$?”, 
+one checks $\texttt{is\_true}(M_n, \texttt{Kn}(a,\psi))$.
+
+\hl{0.5}
+
+\paragraph*{\texttt{demo\_light} – Action models with vocabulary change}
+
+\subparagraph*{Representation.}
+\begin{itemize}
+    \item \textbf{States:} integers (after bisimulation) or any hashable type.
+    \item \textbf{Agents:} same as above.
+    \item \textbf{Vocabulary (\texttt{voc}):} an explicit list of propositional 
+    atoms that ``exist''. Truth evaluation is \textbf{3‑valued} 
+    (True / False / None) – a proposition not in \texttt{voc} is undefined. 
+    This allows modelling ignorance about the existence of a fact.
+    \item \textbf{Valuation:} mapping from states to the set of 
+    atoms true there (only atoms from \texttt{voc} appear).
+    \item \textbf{Accessibility:} stored as a \textbf{list of triples} 
+    \texttt{(ag, state1, state2)} – \\ the states(\texttt{state1,state2}) 
+    that agent(\texttt{ag}) can't 
+    distinguish.
+    \item \textbf{Formulas:} \texttt{Top}, 
+    \texttt{Prp(atom)}, \texttt{Neg}, 
+    \texttt{Conj}, \texttt{Disj}, \texttt{K(agent,form)}, 
+    \texttt{CK(agents,form)} (common knowledge).
+\end{itemize}
+
+\subparagraph*{Event handling – Action Models with Vocabulary Change (ACM).}
+
+An \textbf{ACM} is a generalisation of a public announcement. It consists of:
+\begin{itemize}
+    \item \texttt{states}: a set of event indices (e.g., $0,1,2$).
+    \item \texttt{pre}: a precondition formula for each event.
+    \item \texttt{subst}: for each event, a list of pairs 
+    \texttt{(proposition, formula)}. When the event occurs, 
+    each proposition is \textbf{replaced} by the given formula 
+    (evaluated in the original world). This models \textbf{factual change} 
+    (e.g., flipping a switch, painting a wall).
+    \item \texttt{rels}: a list of triples \texttt{(agent, event1, event2)} 
+    describing which events an agent cannot distinguish.
+    \item \texttt{actual}: the event(s) that actually happen.
+\end{itemize}
+Product update \texttt{upc(m, facm)} (or \texttt{upd} 
+followed by bisimulation) computes the new epistemic model:
+\begin{enumerate}
+    \item New states are pairs \texttt{(world, event)} 
+    where the precondition of the event holds at the world.
+    \item New vocabulary = old vocabulary $\cup$ all 
+    propositions appearing in any substitution of the ACM.
+    \item New valuation: for each \texttt{(w,s)}, a 
+    proposition $p$ is true iff its substitution 
+    (or $p$ itself if no substitution) evaluates to true 
+    at $w$ ($m,w \models p \text{ or }sub(p)$).
+    \item New relations: \texttt{(w1,s1)} and 
+    \texttt{(w2,s2)} are related for agent $ag$ iff 
+    $w1$ and $w2$ were related in $m$ and 
+    $s1$ and $s2$ are related in the $facm$.
+    \item Actual worlds: pairs of actual world and actual event.
+\end{enumerate}
+
+High‑level constructors (all return ACMs) include:
+\begin{itemize}
+    \item \texttt{public(form)} – single event, 
+    precondition \texttt{form}, no substitution. (Public announcement)
+    \item \texttt{group\_m(group, form)} – group 
+    learns \texttt{form}; outsiders cannot distinguish it from \texttt{Top}.
+    \item \texttt{message(agent, form)} – private message to one agent.
+    \item \texttt{test(form)} – silent test 
+    (no one observes the restriction).
+    \item \texttt{info(group, form)} – 
+    group learns \textbf{whether} \texttt{form} is true or false (two events).
+    \item \texttt{p\_change(substitution)} – public 
+    factual change (all agents see the substitution).
+    \item \texttt{perception(agent, form, group)} – 
+    agent and group observe the truth value of \texttt{form} (no change).
+    \item \texttt{perceived\_change(agent, prp, form, group)} – 
+    agent and group observe the old truth value of 
+    \texttt{prp} and simultaneously change it to \texttt{form}.
+\end{itemize}
+
+\subparagraph{Solving a DEL problem.}
+In \texttt{demo\_light}, the initial model does \textbf{not} 
+need to be hand‑crafted for the specific puzzle. 
+Instead, one typically starts from a 
+\textbf{blissful‑ignorance model} generated 
+by \texttt{initM(agents, props)}. 
+This model contains all logically possible worlds 
+(all truth assignments to the given propositions). 
+The real situation is then imposed \textbf{dynamically} 
+using ACM actions.For example:
+\begin{itemize}
+    \item \texttt{test(actual\_situation)} 
+    restricts the model to worlds where the
+    actual situation holds, but 
+    no agent observes this restriction
+     – it is a silent, unobserved factual setting.
+    \item Further actions (\texttt{info}, 
+    \texttt{message}, \texttt{group\_m}, 
+    \texttt{p\_change}, \texttt{perception}, etc.) 
+    refine the model by adding private observations,
+    factual changes, or vocabulary modifications.
+\end{itemize}
+Thus, a DEL problem is specified by:
+\begin{enumerate}
+    \item An initial epistemic model $M$ 
+    (states, relations, valuation, actual worlds).
+    \item A sequence of actions $\alpha_1, \alpha_2, 
+    \dots, \alpha_n$, where each $\alpha_i$ is an ACM 
+    (or a high‑level constructor that produces one).
+\end{enumerate}
+The solution proceeds by repeatedly applying 
+product update:
+\[
+M^{(0)} = M,\qquad M^{(i+1)} = \texttt{upd}(M^i, \alpha_{i+1})
+\]
+After each action, the model may grow 
+(because of pairs with different events) 
+or shrink (because of preconditions). 
+The final model $M^{(n)}$ represents the 
+epistemic situation after all actions. Queries 
+(e.g., “does agent $a$ know $\psi$?”, 
+“what is the value of proposition $p$?”) 
+are answered by evaluating the relevant 
+formula in $M^{(n)}$ using \texttt{is\_true}.
+
+\subsubsection*{(b)}
+
+The extra representational power of \texttt{demo\_light} 
+comes from two key innovations:
+
+\begin{enumerate}
+    \item \textbf{Explicit vocabulary and 3‑valued logic.}
+        \begin{itemize}
+            \item \texttt{demo\_s5} uses a fixed set of propositions; 
+            every proposition is either true or false at every world. 
+            There is no notion of an ``undefined'' proposition.
+            \item \texttt{demo\_light} maintains an explicit list 
+            \texttt{voc} of atoms that exist. A proposition not 
+            in \texttt{voc} evaluates to \texttt{None} (undefined). 
+            This allows modelling situations where agents are not 
+            even aware of a certain fact, or where new propositions 
+            are introduced dynamically (e.g., through an ACM substitution).
+        \end{itemize}
+    
+    \item \textbf{Action models with substitution (ACM).}
+        \begin{itemize}
+            \item \texttt{demo\_s5} can only perform 
+            \textbf{public announcements} – a single event that all agents 
+            know has occurred, and which only removes worlds.
+            \item \texttt{demo\_light} supports \textbf{any action model}, including:
+                \begin{itemize}
+                    \item \textbf{Private and group announcements} 
+                    (e.g., \texttt{message}, \texttt{group\_m}, \texttt{info}) 
+                    – where different agents have different access to the events.
+                    \item \textbf{Silent tests} (\texttt{test}) 
+                    – the world changes but no agent observes it.
+                    \item \textbf{Factual changes} (\texttt{p\_change}, 
+                    \texttt{unobserved\_change}, \texttt{perceived\_change}) 
+                    – the truth value of propositions can be altered, 
+                    not just eliminated.
+                    \item \textbf{Perception changes} – an agent 
+                    observes the truth of a formula \\ 
+                    (\texttt{perception}) or observes a factual change and \\ 
+                    thereby learns the
+                    old value (\texttt{perceived\_change}). \\
+                    For example, if an agent sees a light switch being flipped, 
+                    they learn that the light was previously in the opposite state.
+                \end{itemize}
+            \item Because public announcements are a special case of an ACM 
+            (single event with no substitution), \texttt{demo\_light} 
+            can simulate every scenario that \texttt{demo\_s5} can, 
+            but the converse is false.
+        \end{itemize}
+\end{enumerate}
+
+In summary, \texttt{demo\_light} is strictly more expressive: 
+it can model public announcements, private messages, 
+factual changes, unobserved changes, perception changes, 
+and combinations thereof – all within a unified framework 
+of action models with vocabulary change. \texttt{demo\_s5} 
+is limited to public announcements only, making it suitable 
+for puzzles like Cheryl’s birthday but inadequate 
+for scenarios involving private information or world‑altering events.
+
+\subsubsection*{(c)}
+
+\paragraph*{(i) Can the Sally–Anne test be modeled using \texttt{demo\_s5}?}
+
+\textbf{No.} The \texttt{demo\_s5} framework has two 
+fundamental limitations that make it incapable of modeling the Sally–Anne scenario:
+
+\begin{enumerate}
+    \item \textbf{Only public announcements.}
+    \texttt{demo\_s5} supports only one type of event:
+    a truthful public announcement that all agents hear and 
+    know that everyone hears. In the Sally–Anne test, Anne moves the 
+    toy \textbf{privately} while Sally is out of the room. Sally 
+    does not observe the move, so her belief remains outdated. 
+    This is a private, unobserved action. Public announcements 
+    cannot capture such asymmetric information updates.
+    
+    \item \textbf{No factual change.} 
+    In \texttt{demo\_s5}, the valuation 
+    (which propositions are true at each world) is fixed at 
+    the start and never changes. The only operation is world elimination. 
+    The Sally–Anne test requires a \textbf{factual change}: 
+    the toy’s location changes from Sally’s basket to Anne’s box. 
+    This cannot be represented by simply removing worlds; 
+    the truth value of the proposition “toy in Sally’s basket” 
+    must become false, and “toy in Anne’s box” must become true. 
+    \texttt{demo\_s5} has no mechanism for substitution or valuation update.
+\end{enumerate}
+
+One might attempt to encode both possible locations in the initial 
+model and then use a public announcement that “Anne moves the toy”. 
+However, that announcement would be heard by Sally, making her 
+aware of the move and destroying the false belief that is essential 
+to the test. Therefore, \texttt{demo\_s5} cannot model the Sally–Anne test.
+
+\paragraph*{(ii) Can it be modeled using \texttt{demo\_light}?}
+\textbf{Yes.}
+
+\texttt{demo\_light} can model the test using action 
+models with vocabulary change (ACM). 
+The implementation follows these steps (see \texttt{sally\_anne.py}):
+
+\begin{enumerate}
+    \item \textbf{Agents and propositions:} Sally ($a$) and Anne ($b$); 
+        $P(1)$ = “toy in Sally’s basket”, $P(2)$ = “toy in Anne’s box”.
+    \item \textbf{Initial model:} Start from a blissful‑ignorance model \\
+        (\texttt{initM([sally, anne], [P(1), P(2)])}) 
+        containing all $2^2=4$ worlds.
+        Silently set the actual world (toy in Sally’s basket) using \\
+        \texttt{test(Conj([in\_sally, Neg(in\_anne)]))}.
+    \item \textbf{Private move action (ACM):} 
+        Construct an action model with
+        two events: $0$ (Anne moves the toy) and $1$ (no move).
+        \begin{itemize}
+            \item Preconditions: event $0$ requires \texttt{in\_sally}; 
+                event $1$ requires $\top$.
+            \item Substitutions: event $0$ maps $P(1)$ to $\texttt{False}$ 
+                and $P(2)$ to $\texttt{True}$; event $1$ does nothing.
+            \item Accessibility: Anne distinguishes $0$ from $1$; 
+                Sally cannot distinguish them (edges $(0,1)$ and $(1,0)$).
+            \item Actual event: $0$ (Anne moves the toy).
+        \end{itemize}
+        The ACM is applied with \texttt{upd(m1, private\_move())}.
+    \item \textbf{Verification:} After the update, evaluate:
+        \begin{itemize}
+            \item $K(\text{Sally}, P(2))$ – 
+            Sally does know the toy is in Anne’s box. (False)
+            \item $K(\text{Anne}, P(2))$ – Anne knows the true location. (True)
+            \item Sally considers it possible that the toy is still in her basket\\ 
+                (i.e., $\neg K(\text{Sally}, \neg P(1))$), 
+                capturing her false belief. (True)
+        \end{itemize}
+\end{enumerate}
+
+The program outputs the expected truth values, 
+confirming that \texttt{demo\_light} successfully models the false‑belief scenario.

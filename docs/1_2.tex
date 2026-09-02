@@ -1,0 +1,561 @@
+\subsection*{Problem 1.2}
+
+\subsubsection*{(a)}
+Each announcement by Tandon becomes common knowledge. 
+Consider the repeated announcement: 
+\emph{``Does any of you know whether you have 
+mud on your own forehead?''}. 
+If no child says ``yes'' after the first repetition, 
+then all children know that there are 
+\textbf{more than one} muddy child. 
+The justification is simple: each child sees the others' 
+foreheads. 
+If there were exactly one muddy child, that 
+child would see all others clean and would therefore know 
+his own muddiness immediately after the first announcement 
+\emph{``At least one of you has mud on your forehead''}. 
+Since he does not say ``yes'', the situation 
+with a single muddy child is impossible.
+
+Similarly, if no child says ``yes'' after the second 
+repetition, all children deduce there are 
+\textbf{more than two} muddy children. By induction, 
+after the $i$-th repetition with no ``yes'', 
+the children know there must be \textbf{more than $i$} 
+muddy children. Conversely, if a child knows 
+there are more than $i-1$ muddy children 
+(from the previous round's silence) and sees only $i-2$ muddy 
+children among the others, he deduces he himself must be muddy. 
+Hence, after $k$ repetitions, 
+every child knows whether he has mud on his forehead,
+because the set of possible worlds will become empty.
+
+\paragraph*{Initial Kripke structure:}
+Define \( M = \langle S, \sim, V \rangle \) where
+\begin{gather*}
+    S = \{0,1\}^n, \\
+    \text{Agents} = \{c_i \mid 1 \leq i \leq n\}, \\
+    \forall i \in \{1,\dots,n\}: 
+        \sim_{c_i}(l1r) = \{l1r, l0r\} = \sim_{c_i}(l0r)
+        \quad \text{ and } \lr{i}{0,1}\\
+    \forall i \in \{1,\dots,n\}: 
+        V(0_{c_i}) = \{ l0r : \lr{i}{0,1} \},\quad 
+        V(1_{c_i}) = S \setminus V(0_{c_i}).
+        \tag{1.2(a1)}\label{eq:1.2(a1)}
+\end{gather*}
+The Kripke structure shows all possible worlds as 
+$n$-length bit strings, where the $i$-th bit 0 means child 
+$c_i$ is clean, otherwise muddy. The equivalence relation $\sim$ 
+reflects the fact that each child can see the others' foreheads 
+but not their own. The proposition $0_{c_i}$ represents that 
+child $c_i$ is clean, and $V(0_{c_i})$ is the set of worlds 
+where that holds.
+
+Now we examine how each announcement by Tandon restricts the 
+Kripke structure $M$. Let $\phi_0$ denote the announcement 
+\emph{``At least one of you has mud on your forehead''}, 
+and let $\phi$ denote the announcement 
+\emph{``Does any of you know whether you have mud on your own forehead?''}. 
+We write $\phi_i$ (with $i \ge 1$) for the $i$-th repetition of $\phi$.
+
+\paragraph*{After the announcement $\phi_0$:}
+We encode $\phi_0$ as $\phi_0 = \an$. The restricted Kripke structure 
+is $M^{(0)} = M|_{\phi_0}$ where
+\begin{gather*}
+    S^{(0)} \coloneqq [\![ \phi_0 ]\!] \coloneqq 
+        \{ s \in S : M,s \models \phi_0 \}, \\
+    \forall i \in \{1,\dots,n\}: 
+        \sim_{c_i}^{(0)} \coloneqq 
+        \sim_{c_i} \cap ([\![ \phi_0 ]\!] \times [\![ \phi_0 ]\!]), \\
+    V^{(0)}(p) \coloneqq V(p) \cap [\![ \phi_0 ]\!].
+    \tag{1.2(a2)}\label{eq:1.2(a2)}
+\end{gather*}
+For any world $s \in S$,
+\begin{align*}
+    M,s \models \phi_0 
+        &\iff M,s \models \an \\
+        &\iff \bigvee_{i=1}^{n} M,s \models 1_{c_i} \\
+        &\iff \bigvee_{i=1}^{n} s \in V(1_{c_i}). \tag{1.2(a3)}\label{eq:1.2(a3)}
+\end{align*}
+Except the world $\{0\}^n$, all worlds satisfy \eq{1.2(a3)}; hence only $\{0\}^n$ 
+is eliminated from $M^{(0)}$. Thus $S^{(0)} = S \setminus \{0\}^n$, and 
+the relations and valuation are restricted accordingly.
+
+\paragraph{Intuitive verification:} The announcement itself forces 
+the condition that there is at least one muddy child, so the world 
+with no muddy child becomes impossible. All other worlds have at least 
+one muddy child and therefore survive.
+
+\paragraph*{After the announcement $\phi_i$ for $i \ge 1$:}
+By construction $\phi_i = \phi$ for all $i \ge 1$; the index $i$ denotes 
+the repetition round. We encode $\phi$ as $\phi = \ani{j}$. This formula 
+only allows worlds where no child knows whether he is muddy.
+
+After the $i$-th repetition, the restricted Kripke structure is 
+$M^{(i)} = M^{(i-1)}|_{\phi_i} = \langle S^{(i)}, \sim^{(i)}, V^{(i)} \rangle$ with
+\begin{gather*}
+    S^{(i)} \coloneqq [\![ \phi_i ]\!] \coloneqq 
+        \{ s \in S^{(i-1)} : M^{(i-1)},s \models \phi_i \}, \\
+    \forall i \in \{1,\dots,n\}: 
+        \sim_{c_i}^{(i)} \coloneqq 
+        \sim_{c_i}^{(i-1)} \cap ([\![ \phi_i ]\!] \times [\![ \phi_i ]\!]), \\
+    V^{(i)}(p) \coloneqq V^{(i-1)}(p) \cap [\![ \phi_i ]\!].
+    \tag{1.2(a4)}\label{eq:1.2(a4)}
+\end{gather*}
+For any world $s \in S^{(i-1)}$ and $i = 1,2,\dots$,
+\begin{align*}
+    M^{(i-1)},s \models \phi_i 
+        &\iff M^{(i-1)},s \models \ani{j} \\
+        &\iff \bigwedge_{j=1}^{n} \big( 
+            M^{(i-1)},s \models \neg K_{c_j}1_{c_j} 
+            \;\land\; M^{(i-1)},s \models \neg K_{c_j}0_{c_j} \big) \\
+        &\iff \bigwedge_{j=1}^{n} \big( 
+            \neg (M^{(i-1)},s \models K_{c_j}1_{c_j}) 
+            \;\land\; \neg (M^{(i-1)},s \models K_{c_j}0_{c_j}) \big) \\
+        \iff \bigwedge_{j=1}^{n} \big( 
+            &\neg(\forall t \in \sim_{c_j}^{(i-1)}(s): t \in V^{(i-1)}(1_{c_j}))
+            \;\land\; \\
+            &\neg(\forall t \in \sim_{c_j}^{(i-1)}(s): 
+                t \in V^{(i-1)}(0_{c_j})) \big). \tag{1.2(a5)}\label{eq:1.2(a5)}
+\end{align*}
+
+\subparagraph{Case $i=1$ (first repetition):} 
+Let $m_{j1} = \{ l1r : \lr{j}{0} \}$ be the set of
+ worlds where only child $c_j$ is muddy, 
+and $m_1 = \bigcup_{j=1}^{n} m_{j1}$ the set 
+of worlds with exactly one muddy child. 
+Observe that \textbf{for all $j$},
+\begin{align*}
+    &\forall l1r \in m_{j1}: \quad 
+        \sim_{c_j}^{(0)}(l1r) = \{l1r\} \quad 
+            (\text{since } l0r \notin S^{(0)}), \tag{1.2(a6)}\label{eq:1.2(a6)}\\
+    &\forall l1r,l0r \in S^{(0)} \setminus m_1 \text{ and, } \lr{j}{0,1}: \\ 
+        &\sim_{c_j}^{(0)}(l1r) = \{l1r,l0r\} = \sim_{c_j}^{(0)}(l0r). 
+        \tag{1.2(a7)}\label{eq:1.2(a7)}
+\end{align*}
+From \eq{1.2(a5)} and \eq{1.2(a6)}, for any child $c_j$ and any $s \in m_{j1}$,
+we have
+$M^{(0)},s \models K_{c_j}1_{c_j} (\because l1r \in 1_{c_j})$
+ and $M^{(0)},s 
+\not\models K_{c_j}0_{c_j} (\because l1r \not\in V^{(0)}(0_{c_j})) $. 
+Hence all worlds in $m_{j1}$ fail to satisfy 
+$\phi_1$ and are eliminated from $M^{(1)}$. 
+This elimination is possible only because the world 
+$\{0\}^n$ was already removed from $S^{(0)}$, 
+which makes the equivalence classes of worlds in $m_{j1}$ singletons. 
+For any world $s \in S^{(0)} \setminus m_1$, 
+from \eq{1.2(a7)}
+\( (l1r \not\in V^{(0)}(0_{c_j})\text{ and }l0r \not\in V^{(0)}(1_{c_j}) )\),
+where $"l1r"$ and $"l0r"$ belongs to $\sim_{c_j}^{(0)}(s)$.
+Hence, we obtain
+\[
+\bigwedge_{j=1}^{n} \big( M^{(0)},s \not\models K_{c_j}1_{c_j} 
+\;\land\; M^{(0)},s \not\models K_{c_j}0_{c_j} \big),
+\]
+
+so they satisfy $\phi_1$ and survive. Consequently,
+$S^{(1)} = S^{(0)} \setminus m_1$, 
+i.e., all worlds with exactly one muddy 
+child are removed after the first repetition.
+
+\subparagraph{Case $i=2$ (second repetition):} 
+By the same reasoning as in case $i=1$, 
+because worlds with exactly one muddy child were eliminated 
+after $\phi_1$, the equivalence classes for worlds with exactly 
+two muddy children become singletons. 
+Therefore, after the second repetition $\phi_2$, 
+all worlds with exactly two muddy children are eliminated.
+
+We can frame this as a proof by induction: 
+after the $i$-th repetition of $\phi$, 
+only worlds with \textbf{more than $i$ muddy children} 
+remain in $M^{(i)}$. Hence, after $k$ repetitions, 
+all children know their own muddy status,
+because the set of possible worlds will become empty.
+
+\paragraph{Intuitive verification:} If there were exactly one muddy child, 
+then after the announcement $\phi_0$, that child would know 
+he is muddy because he sees all others clean. Similarly,
+if no child says ``yes'' after the first repetition, 
+then any muddy child must see at least one other muddy child; 
+otherwise he would have deduced his own muddiness. 
+This reasoning repeats: after the $i$-th repetition with no 
+``yes'', each muddy child sees at least $i$ other muddy children, 
+so he still cannot be certain. But once the number of 
+repetitions reaches the actual number of muddy children, 
+every muddy child sees only $k-1$ muddy others 
+and deduces he must be muddy. Hence, after $k$ repetitions, 
+all $k$ muddy children know they are muddy,
+because the set of possible worlds will become empty.
+
+\subsubsection*{(b)}
+
+\paragraph*{Initial Kripke structure:}
+Define \( M = \langle S, \sim, V \rangle \) with the same set \(S\) and 
+valuations as in (a), but now all children have bandages over their eyes, 
+so they cannot distinguish any worlds:
+\begin{gather*}
+    S = \{0,1\}^n, \\
+    \text{Agents} = \{c_i \mid 1 \leq i \leq n\}, \\
+    \forall i \in \{1,\dots,n\}: \sim_{c_i} = S \times S, \\
+    \forall i \in \{1,\dots,n\}: 
+        V(0_{c_i}) = \{ l0r : \lr{i}{0,1} \},\quad 
+        V(1_{c_i}) = S \setminus V(0_{c_i}).
+\end{gather*}
+
+\paragraph*{After announcement $\phi_0$:}
+As shown in part (a) \eq{1.2(a3)}, after the announcement $\phi_0$, 
+the restricted Kripke structure \( M^{(0)} = M|_{\phi_0} \) satisfies
+\begin{gather*}
+    S^{(0)} = S \setminus \{0\}^n, \\
+    \forall i \in \{1,\dots,n\}:
+    \sim_{c_i}^{(0)} = S^{(0)} \times S^{(0)}. 
+        \tag{1.2(b1)}\label{eq:1.2(b1)}
+\end{gather*}
+The valuation function is restricted accordingly, following the definition 
+from part (a) \eq{1.2(a2)}.
+
+\paragraph*{After announcement $\phi_i$ for $i \ge 1$:}
+After the $i$-th repetition, the restricted Kripke structure is 
+\( M^{(i)} = M^{(i-1)}|_{\phi_i} = 
+    \langle S^{(i)}, \sim^{(i)}, V^{(i)} \rangle \), defined 
+similarly to part (a) \eq{1.2(a4)}.
+
+\subparagraph{Case $i=1$:} 
+Since the children cannot see, using formula \eq{1.2(a4)} and the 
+equivalence relation \eq{1.2(b1)}, for any world \( s \in S^{(0)} \):
+\begin{align*}
+    &\forall j \in \{1,\dots,n\}: 
+        \exists t_1, t_2 \in \sim_{c_j}^{(0)}(s): 
+        t_1 \notin V^{(0)}(1_{c_j}) \;\land\; t_2 \notin V^{(0)}(0_{c_j}) \\
+        &\because (t_1 \in S^{(0)} \setminus V^{(0)}(1_{c_j}) \text{ and }
+         t_2 \in S^{(0)} \setminus V^{(0)}(0_{c_j})) \\
+    \iff &\forall j \in \{1,\dots,n\}: 
+        \neg (M^{(0)}, s \models K_{c_j}1_{c_j}) 
+        \;\land\; \neg (M^{(0)}, s \models K_{c_j}0_{c_j}) \\
+    \iff &\forall j \in \{1,\dots,n\}: 
+        M^{(0)}, s \models \neg K_{c_j}1_{c_j} \land \neg K_{c_j}0_{c_j} \\
+    \iff &\bigwedge_{j=1}^{n} M^{(0)}, s \models \neg K_{c_j}1_{c_j} 
+        \land \neg K_{c_j}0_{c_j}.
+\end{align*}
+Thus every world in \( S^{(0)} \) satisfies the announcement \(\phi_1\), so 
+\( S^{(1)} \coloneqq [\![ \phi_1 ]\!] = S^{(0)} \). This reflects the fact 
+that in every world of \( S^{(0)} \), no child knows his muddy status. 
+In fact, \( M^{(1)} = M^{(0)} \).
+
+\subparagraph{Case $i=2,\dots$:} 
+The same pattern holds for all further repetitions of \(\phi\); 
+(because the structure $M^{(i-1)}$ and announcement $\phi$ is
+same for all future repetition, so we'll get same result)
+the Kripke 
+structure remains unchanged after each round. Hence,
+\[
+\forall i \in \{2,\dots\}: M^{(i)} = M^{(i-1)} = M^{(0)}.
+\]
+
+\paragraph{Intuitive verification:} Since no child can see the status of 
+others, they lack the necessary information to determine their own 
+muddiness. Their only knowledge about the actual world is that there 
+is at least one muddy child (from \(\phi_0\)). Consequently, they will 
+never learn their own muddy status, even after infinitely many repetitions 
+of \(\phi\).
+
+\subsubsection*{(c)}
+
+\paragraph*{Initial Kripke structure:} 
+We use the same initial Kripke structure as in $M$ defined in \eq{1.2(a1)}.
+To encode Tandon's statement, we define an action model which
+captures the inattentiveness of \emph{child 1}. 
+Define \( M^{a}= \langle S^{a},\sim^{a},prec \rangle \) such that
+\begin{gather*}
+    S^{a} = \{A,B\}, \\
+    \sim^{a} = \{(s,s) : s \in S^{a}\}, \\
+    prec(A) = \bigvee_{j=1}^{n} 1_{c_j}, \\
+    prec(B) = \text{True}.
+\end{gather*}
+In the action model $M^{a}$, $A$ represents the announcement 
+\emph{``At least one of you has mud on your forehead''} and 
+$B$ represents a vacuous statement (always true).
+
+\paragraph*{After Tandon's statement:}
+The modified Kripke structure after Tandon's statement
+is the product update of $M$ and $M^a$:
+$M'^{(0)} = M \otimes M^a = \langle S'^{(0)},\sim'^{(0)},V'^{(0)} \rangle$,
+where
+\begin{gather*}
+    S'^{(0)} = \{ (s,a) : s \in S,\; a \in S^a,\; M,s \models prec(a) \}, \\
+    \text{Agents} = \{c_j : j \in \{1,2,\dots,n\}\}, \\
+    \sim'^{(0)}_{c_1} = \{ ((s_1,a_1),(s_2,a_2)) : 
+        \forall s_1 \in S,\; \forall s_2 \in \sim_{c_1}(s_1),\;
+        \forall a_1,a_2 \in S^a \}, \tag{1.2(c1)}\label{eq:1.2(c1)}\\
+    \forall j \in \{2,3,\dots,n\}:\;
+        \sim'^{(0)}_{c_j} = \{ ((s_1,a),(s_2,a)) :
+            \forall s_1 \in S,\; \forall s_2 \in \sim_{c_1}(s_1),\;
+            \forall a \in S^a \}, \tag{1.2(c2)}\label{eq:1.2(c2)}\\
+    V'^{(0)}(p) = \{ (s,a) : \forall s \in V(p),\; \forall a \in S^a \}.
+\end{gather*}
+The equivalence relation for child $c_1$ differs from 
+that of other children because $c_1$ cannot distinguish 
+between $A$ and $B$, whereas the others can.
+The restricted structure does not contain the world $(\{0\}^n,A)$ 
+because, by construction of the product update, 
+$M, \{0\}^n \not\models prec(A)$, while $prec(B)=\text{True}$; 
+thus $(s,B) \in S'$ for all $s \in S$.
+
+\paragraph*{(i)}
+For $n=2$, the Kripke structure is as follows.
+
+\textbf{Before Tandon's statement $M$:}
+\begin{align*}
+    &S = \{ 00, 01, 10, 11 \}, \\
+    &\sim_{c_1}(00) = \{00,10\} = \sim_{c_1}(10), \\
+    &\sim_{c_1}(01) = \{01,11\} = \sim_{c_1}(11), \\
+    &\sim_{c_2}(00) = \{00,01\} = \sim_{c_2}(01), \\
+    &\sim_{c_2}(01) = \{01,11\} = \sim_{c_2}(11), \\
+    &V(0_{c_1}) = \{ 00, 01 \},\quad V(1_{c_1}) = S \setminus V(0_{c_1}), \\
+    &V(0_{c_2}) = \{ 00, 10 \},\quad V(1_{c_2}) = S \setminus V(0_{c_2}).
+\end{align*}
+
+\textbf{After Tandon's statement $M'^{(0)}$:} 
+The product update $M \otimes M^a$ yields
+\begin{align*}
+    &S'^{(0)} = \{ (01,A), (10,A), (11,A),
+           (00,B), (01,B), (10,B), (11,B) \}, \\
+    &\forall a \in \{A,B\}: \\
+    &\quad \sim'^{(0)}_{c_1}(01,a) = \{(01,A),(11,A),(01,B),(11,B)\} 
+        = \sim'^{(0)}_{c_1}(11,a), \\
+    &\quad \sim'^{(0)}_{c_1}(10,a) = \{(10,A),(00,B),(10,B)\} 
+        = \sim'^{(0)}_{c_1}(00,B), \\
+    &\quad \sim'^{(0)}_{c_2}(10,a) = \{(10,a),(11,a)\} = \sim'^{(0)}_{c_2}(11,a), \\
+    &\quad \sim'^{(0)}_{c_2}(00,B) = \{(00,B),(01,B)\} = \sim'^{(0)}_{c_2}(01,B), \\
+    &\quad \sim'^{(0)}_{c_2}(01,A) = \{(01,A)\}, \\
+    &V'^{(0)}(0_{c_1}) = \{ (01,A), (00,B), (01,B) \},\quad
+        V'^{(0)}(1_{c_1}) = S'^{(0)} \setminus V'^{(0)}(0_{c_1}), \\
+    &V'^{(0)}(0_{c_2}) = \{ (00,B), (10,A), (10,B) \},\quad
+        V'^{(0)}(1_{c_2}) = S'^{(0)} \setminus V'^{(0)}(0_{c_2}).
+\end{align*}
+
+\paragraph*{(ii)}
+
+\textbf{Is it possible for the children to ascertain whether they are muddy?}
+
+To answer this, we analyse what happens after each repetition round of 
+the second announcement $\phi$, 
+\emph{``Does any of you know whether you have mud on your own forehead?''}.
+After the $i$-th repetition ($i \ge 1$) of $\phi$ (denoted $\phi_i$), 
+the restricted Kripke structure is 
+$M'^{(i)} = M'^{(i-1)}|_{\phi_i} = \langle S'^{(i)}, 
+\sim^{(i)}, V'^{(i)} \rangle$ with
+\begin{gather*}
+    S'^{(i)} \coloneqq [\![ \phi_i ]\!] \coloneqq 
+    \{ s \in S'^{(i-1)} : M'^{(i-1)},s \models \phi_i \}, \\
+    \forall i \in \{1,\dots,n\}: 
+    \sim_{c_i}^{(i)} \coloneqq 
+    \sim_{c_i}^{(i-1)} \cap ([\![ \phi_i ]\!] \times [\![ \phi_i ]\!]), \\
+    V'^{(i)}(p) \coloneqq V'^{(i-1)}(p) \cap [\![ \phi_i ]\!].
+\end{gather*}
+The encoding of $\phi$ and the formula are similar to \eq{1.2(a4)} and \eq{1.2(a5)}:
+\begin{align*}
+    M'^{(i-1)},s \models \phi_i 
+    &\iff M'^{(i-1)},s \models \ani{j} \\
+    \iff \bigwedge_{j=1}^{n} \Big( 
+        &\neg\bigl(\forall t \in \sim_{c_j}'^{(i-1)}(s): 
+            t \in V'^{(i-1)}(1_{c_j})\bigr)
+        \;\land\; \\
+        &\neg\bigl(\forall t \in \sim_{c_j}'^{(i-1)}(s): 
+            t \in V'^{(i-1)}(0_{c_j})\bigr) \Big). 
+        \tag{1.2(c3)}\label{eq:1.2(c3)}
+\end{align*}
+
+\subparagraph{Case $i=1$ (first repetition):} 
+Define 
+\(m_{ja1}' = \{ (l1r,A) : \lr{j}{0} \}\) 
+(worlds in $S'$ with only child $j$ muddy)
+and
+\(m_{a1}' = \bigcup_{j=2}^{n} m_{ja1}'\)
+(the set of worlds where exactly one child other than $c_1$ is muddy).
+
+Observe that for $j=1$,
+\begin{align*}
+    &\forall (l1r,A) \in m_{1a1}': \\ 
+        &\sim_{c_1}'^{(0)}((l1r,A)) = \{(l1r,A),(l0r,B),(l1r,B)\} 
+        = \sim_{c_1}'^{(0)}((l0r,B)), \tag{1.2(c4)}\label{eq:1.2(c4)}\\
+    &\forall (l1r,a),(l0r,b) \in S'^{(0)} \setminus m'_{a1} 
+        \text{ with } \lr{j}{0,1}: \\ 
+        &\sim_{c_1}'^{(0)}((l1r,a)) = 
+        \{(l1r,a),(l1r,b),(l0r,a),(l0r,b)\} = \sim_{c_j}'^{(0)}((l0r,b)). 
+        \tag{1.2(c5)}\label{eq:1.2(c5)}
+\end{align*}
+For all $j \ge 2$,
+\begin{align*}
+    \forall j \in &\{2,3,\dots,n\}: \\
+    &\forall (l1r,A) \in m_{ja1}': \quad 
+        \sim_{c_j}'^{(0)}((l1r,A)) = \{(l1r,A)\} 
+        \quad (\text{since } (l0r,A) \notin S'^{(0)}), 
+            \tag{1.2(c6)}\label{eq:1.2(c6)}\\
+    &\forall (l1r,a),(l0r,a) \in S'^{(0)} \setminus m'_{a1} 
+        \text{ with } \lr{j}{0,1}: \\ 
+        &\sim_{c_j}'^{(0)}((l1r,a)) = \{(l1r,a),(l0r,a)\} = 
+        \sim_{c_j}'^{(0)}((l0r,a)). \tag{1.2(c7)}\label{eq:1.2(c7)}
+\end{align*}
+
+From \eq{1.2(c3)} and \eq{1.2(c6)}, 
+for any child $c_j$ ($j \ge 2$) and any $s \in m_{ja1}'$,
+we have $M'^{(0)},s \models K_{c_j}1_{c_j}$ 
+(because $(l1r,A) \notin V'^{(0)}(1_{c_j})$) and 
+$M'^{(0)},s \not\models K_{c_j}0_{c_j}$ 
+(because $(l1r,A) \notin V'^{(0)}(0_{c_j})$). 
+Hence all worlds in $m_{ja1}'$ fail to satisfy $\phi_1(=\phi)$ 
+and are eliminated from $M'^{(1)}$. This elimination is possible 
+only because the world $(\{0\}^n,A)$ was already removed from $S^{(0)}$, 
+which makes the equivalence classes of worlds in $m_{ja1}'$ singletons.
+
+For any world $s \in S^{(0)} \setminus m_{a1}'$, using \eq{1.2(c4)}, 
+\eq{1.2(c5)} and \eq{1.2(c7)}, we can argue that we will always 
+find worlds $t_1,t_2 \in \sim_{c_j}'^{(0)}(s)$ for every $j \ge 1$ 
+such that $t_1 \notin V'^{(0)}(1_{c_j})$ and $t_2 \notin V'^{(0)}(0_{c_j})$. 
+Hence
+\[
+\bigwedge_{j=1}^{n} \big( M'^{(0)},s \not\models K_{c_j}1_{c_j} 
+\;\land\; M'^{(0)},s \not\models K_{c_j}0_{c_j} \big),
+\]
+so they satisfy $\phi_1$ and survive. Consequently,
+$S^{(1)} = S^{(0)} \setminus m_{a1}'$; i.e., all \textbf{$A$-worlds} 
+(worlds of the form $(s,A)$) with \textbf{exactly one} muddy child 
+(other than $c_1$) are removed after the first repetition, 
+while $A$-worlds with two or more muddy children and all $B$-worlds survive.
+
+\subparagraph{Case $i=2$ (second repetition):} 
+By the same reasoning as in case $i=1$, because $A$-worlds 
+with exactly one muddy child were eliminated after $\phi_1$, t
+he equivalence classes for worlds with exactly two muddy children 
+become singletons. Therefore, after the second repetition $\phi_2$, 
+all $A$-worlds with exactly two muddy children (other than $c_1$) 
+are eliminated. Again, $A$-worlds where $c_1$ is muddy and 
+all $B$-worlds survive.
+
+We can frame this as a proof by induction: after the $i$-th repetition of 
+$\phi$, the surviving worlds are those $A$-worlds with 
+\textbf{more than $i$ muddy children} or with \textbf{child $c_1$ muddy}, 
+together with \textbf{all $B$-worlds}. Hence, even after infinitely 
+many repetitions of $\phi$, $A$-worlds with child $c_1$ muddy and 
+all $B$-worlds remain in the restricted Kripke structure. 
+Other children can ascertain their muddy status only if 
+Tandon announced $A$; otherwise, no one can deduce. 
+Child $c_1$ can never deduce whether he has mud on his forehead in any case.
+
+\paragraph{Intuitive verification:} 
+Since all children except child $c_1$ are attentive, 
+they know for sure which announcement Tandon made: $A$ 
+(``At least one of you has mud on his forehead'') or 
+$B$ (vacuous statement). Therefore, with each repetition 
+they can deduce whether they are muddy (as in the previous cases). 
+However, child $c_1$ is inattentive and never knows which 
+announcement was made, 
+so he can never deduce his own muddy status. 
+In the case of a vacuous statement $B$, there is insufficient 
+information about the true world, for any child to ever deduces anything.
+
+\subsubsection*{(d)}
+
+We assume the same initial Kripke structure as in \eq{1.2(a1)}. 
+The only change is that the initial announcement $\phi_0$ was 
+\emph{``At least one of you has mud on your forehead''}, but now it is 
+changed to \emph{``Child 1 has mud on his forehead''}. 
+Accordingly, the encoding of the announcement becomes $\phi_0 = 1_{c_1}$.
+
+\paragraph*{After announcement $\phi_0 = 1_{c_1}$:}
+The restricted Kripke structure $M^{(0)} = M|_{\phi_0}$ is defined as in 
+\eq{1.2(a2)} with $S^{(0)} \coloneqq [\![ \phi_0 ]\!] = 
+\{ s \in S : M,s \models \phi_0 \}$. 
+For any world $s \in S$,
+\begin{align*}
+    M,s \models \phi_0 
+        &\iff M,s \models 1_{c_1} \\
+        &\iff s \in V(1_{c_1}). \tag{1.2(d1)}\label{eq:1.2(d1)}
+\end{align*}
+From \eq{1.2(d1)} only the worlds in $V(1_{c_1})$ survive the announcement, hence
+\begin{align*}
+    &S^{(0)} \coloneqq [\![ \phi_0 ]\!] = V(1_{c_1}), \\
+    &\sim_{c_1}^{(0)}(1r) = \{1r\} \quad \text{for all } r \in \{0,1\}^{n-1}, \\
+    &\forall j \in \{2,\dots,n\}: \\
+    &\qquad \sim_{c_j}^{(0)}(1l1r) = \{ 1l1r, 1l0r \} = \sim_{c_j}^{(0)}(1l0r) \\
+    &\qquad \text{where } \forall l \in \{0,1\}^{j-1},\; 
+        \forall r \in \{0,1\}^{n-j-1}. \tag{1.2(d2)}\label{eq:1.2(d2)}
+\end{align*}
+The valuation function is restricted similarly.
+
+\paragraph*{Can others deduce whether they are muddy?}
+To answer this, we check which worlds allow at least one child other than 
+\emph{child 1} to deduce his muddy status. For that, we restrict the Kripke structure 
+against the repetitive announcement 
+\[
+\phi = \bigwedge_{j=2}^{n} \big( \neg K_{c_j}1_{c_j} \land \neg K_{c_j}0_{c_j} \big).
+\]
+After the $i$-th repetition, the restricted structure is 
+$M^{(i)} = M^{(i-1)}|_{\phi_i} = \langle S^{(i)}, \sim^{(i)}, V^{(i)} \rangle$. 
+Worlds in which any other child knows his own state are eliminated by $\phi$. 
+Since the announcement is similar to that in \eq{1.2(a5)}, the formula becomes:
+\begin{align*}
+    M^{(i-1)},s \models \phi_i 
+        &\iff M^{(i-1)},s \models \bigwedge_{j=2}^{n} 
+            \big( \neg K_{c_j}1_{c_j} \land \neg K_{c_j}0_{c_j} \big) \\
+        &\iff \bigwedge_{j=2}^{n} \Big( 
+            \neg\bigl(\forall t \in \sim_{c_j}^{(i-1)}(s): 
+                t \in V^{(i-1)}(1_{c_j})\bigr) \\
+        &\qquad\quad \land\; 
+            \neg\bigl(\forall t \in \sim_{c_j}^{(i-1)}(s): 
+                t \in V^{(i-1)}(0_{c_j})\bigr) \Big). 
+                \tag{1.2(d3)}\label{eq:1.2(d3)}
+\end{align*}
+
+\subparagraph{Case $i=1$ (first repetition):} 
+Analysing the equivalence relation $\sim^{(0)}$ 
+from \eq{1.2(d2)}, for any $s \in S^{(0)}$ we have:
+\begin{align*}
+    &\forall j \in \{2,\dots,n\}: 
+        \exists t_1, t_2 \in \sim_{c_j}^{(0)}(s):
+            t_1 \notin V^{(0)}(1_{c_j}) \;\land\; t_2 \notin V^{(0)}(0_{c_j}) \\
+    &\qquad (\text{choose } t_1 = 1l0r,\; t_2 = 1l1r \text{ with appropriate } l,r) \\
+    \iff &\forall j \in \{2,\dots,n\}: 
+        \neg\bigl(\forall t \in \sim_{c_j}^{(0)}(s): 
+            t \in V^{(0)}(1_{c_j})\bigr)
+        \;\land\; 
+        \neg\bigl(\forall t \in \sim_{c_j}^{(0)}(s): 
+            t \in V^{(0)}(0_{c_j})\bigr) \\
+    \iff &\bigwedge_{j=2}^{n} 
+        \Big( \neg (M^{(0)},s \models K_{c_j}1_{c_j})
+        \;\land\; \neg (M^{(0)},s \models K_{c_j}0_{c_j}) \Big) \\
+    \iff &\bigwedge_{j=2}^{n} 
+        \big( M^{(0)},s \models \neg K_{c_j}1_{c_j} \land \neg K_{c_j}0_{c_j} \big). 
+        \tag{1.2(d4)}\label{eq:1.2(d4)}
+\end{align*}
+Since every world $s \in S^{(0)}$ satisfies \eq{1.2(d4)}, 
+all worlds survive the announcement. 
+Thus $S^{(1)} \coloneqq [\![ \phi_1 ]\!] = S^{(0)}$ and 
+$M^{(1)} = M^{(0)}|_{\phi_1} = M^{(0)}$. 
+This reflects that, even after the first repetition, 
+no child other than \emph{child 1} can deduce his muddy status.
+
+\subparagraph{Case $i=2,\dots$:} 
+The same pattern holds for all further repetitions of 
+$\phi$ because the structure $M^{(i-1)}$ and the announcement 
+$\phi$ remain identical each round. Hence,
+\[
+\forall i \ge 2:\quad M^{(i)} = M^{(i-1)} = M^{(0)}.
+\]
+This shows mathematically that even after infinitely 
+many repetitions of the announcement $\phi$, 
+no child other than \emph{child 1} can deduce whether he is muddy.
+
+\paragraph{Intuitive verification:} The announcement 
+\emph{``Child 1 has mud on his forehead''} ($\phi_{c1}$) 
+initially conveys more information 
+than the announcement \emph{``At least one child has mud''} ($\phi_0$). 
+However, as repetitions of the second announcement ($\phi$) proceed, 
+$\phi_{c1}$ does not propagate any further information, 
+whereas $\phi_0$ propagates the information that 
+\textbf{more than $i-1$} children are muddy at round $i$. 
+Since $\phi_0$ unfolds additional information with each repetition, 
+the children were able to deduce their own muddy status, 
+which was not possible with $\phi_{c1}$.

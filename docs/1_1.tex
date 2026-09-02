@@ -1,0 +1,131 @@
+\subsection*{Problem 1.1}
+
+\subsubsection*{(a)}
+The color of Sabhya's hat is \textcolor{red}{red}.
+
+\textbf{Justification:} Considering Arunabh does not know the color 
+of his hat, the possible colors of the hats of Dinu and Sabhya 
+can be represented by the set \(\{rr, wr, rw\}\) 
+(first for Dinu, second for Sabhya). 
+This becomes \emph{common knowledge} after Arunabh's announcement. 
+Since Dinu can see Sabhya's hat, if Sabhya's hat were white 
+then Dinu would know his own hat is red. Dinu not knowing 
+his hat color forces the condition that Sabhya's hat must be red.
+
+\subsubsection*{(b)}
+
+\textbf{Initial Kripke Structure:} Define \( M = \langle S,\sim,V \rangle\) where
+\begin{gather*}
+    S = \{ rrr, rrw, rwr, rww, wrr, wrw, wwr \} \\
+    \text{Agents} = \{a,d,s\} \\
+    \sim_{a}(rrr) = \{ rrr,wrr \} = \sim_{a}(wrr) \\
+    \sim_{a}(rrw) = \{ rrw,wrw \} = \sim_{a}(wrw) \\
+    \sim_{a}(rwr) = \{ rwr,wwr \} = \sim_{a}(wwr) \\
+    \sim_{a}(rww) = \{ rww \}  \tag{1.1(b1)}\label{eq:1.1(b1)} \\
+    \text{(Similarly \(\sim_{d},\sim_{s}\) 
+    are defined for the other agents.)} \\
+    V(r_{a}) = \{ rrr,rwr,rrw,rww \},\quad
+    V(w_{a}) = S \setminus V(r_{a}) \\
+    V(r_{d}) = \{ rrr,wrr,rrw,wrw \},\quad
+    V(w_{d}) = S \setminus V(r_{d})\\
+    V(r_{s}) = \{ rrr,wrr,rwr,wwr \},\quad
+    V(w_{s}) = S \setminus V(r_{s})
+\end{gather*}
+We define the announcements as follows: \(\phi_{a}\) means 
+“Arunabh cannot determine his hat color”, and \(\phi_{d}\) 
+means “Dinu cannot determine his hat color”. We encode them as
+\[
+\phi_{i} = \neg K_{i}r_{i} \land \neg K_{i}w_{i},\qquad \forall i \in \{a,d\}.
+\]
+Now we see how the announcements restrict the Kripke structure.
+
+\paragraph*{After announcement \(\phi_{a}\):} 
+The restricted Kripke structure of \(M\) is \(M|_{\phi_{a}}\) where
+\begin{gather*}
+    S^{(a)} \coloneqq [\![ \phi_{a} ]\!] \coloneqq 
+        \{ s \in S : M,s \models \phi_{a}\} \\
+    \forall i \in \{a,d,s\}: \sim_{i}^{(a)} \coloneqq 
+        \sim_{i} \cap ([\![ \phi_{a} ]\!] \times [\![ \phi_{a} ]\!]) \\
+    V^{(a)}(p) \coloneqq V(p) \cap [\![ \phi_{a} ]\!]
+\end{gather*}
+For any world \(s \in S\),
+\begin{align*}
+    M,s \models \phi_{a} 
+        &\iff M,s \models \neg K_{a}r_{a} \land \neg K_{a}w_{a} \\
+        &\iff \neg(M,s \models K_{a}r_{a}) \land \neg(M,s \models K_{a}w_{a}) \\
+        &\iff \neg(\forall t \in \sim_{a}(s): t \in V(r_{a}))
+            \land \neg(\forall t \in \sim_{a}(s): t \in V(w_{a})) \tag{1.1(b2)}\label{eq:1.1(b2)}
+\end{align*}
+From the definition of \(\sim_{a}\) in \eq{1.1(b1)}, we observe:
+\begin{align*}
+    &\forall s \in S \setminus \{rww\}:
+        \exists t_{1},t_{2} \in \sim_{a}(s):
+            t_{1} \not\in V(r_{a}) \land t_{2} \not\in V(w_{a}) \\
+    \iff &\forall s \in S \setminus \{rww\}:
+        \neg(\forall t \in \sim_{a}(s): t \in V(r_{a}))
+        \land \neg(\forall t \in \sim_{a}(s): t \in V(w_{a})) \\
+    \iff &\forall s \in S \setminus \{rww\}:
+        M,s \models \neg K_{a}r_{a} \land \neg K_{a}w_{a} \tag{1.1(b3)}\label{eq:1.1(b3)}
+\end{align*}
+Thus \( S^{(a)} = [\![ \phi_{a} ]\!] = S \setminus \{rww\}\). 
+The equivalence relations and valuation are restricted accordingly.
+
+\paragraph{Intuitive verification:} Since there are only two white hats, 
+if Dinu and Sabhya both had white hats, Arunabh would definitely 
+know his hat is red. Hence the world \(rww\) is eliminated after 
+\(\phi_{a}\). In all other worlds, Arunabh lacks sufficient 
+information to know his hat color, so they survive.
+
+\paragraph*{After announcement \(\phi_{d}\):} 
+Now restrict \(M|_{\phi_{a}}\) further:
+\begin{gather*}
+    S^{(d)} \coloneqq [\![ \phi_{d} ]\!] \coloneqq 
+        \{ s \in S^{(a)} : M|_{\phi_{a}},s \models \phi_{d}\} \\
+    \forall i: \sim_{i}^{(d)} \coloneqq \sim_{i}^{(a)} \cap 
+        ([\![ \phi_{d} ]\!] \times [\![ \phi_{d} ]\!]) \\
+    V^{(d)}(p) \coloneqq V^{(a)}(p) \cap [\![ \phi_{d} ]\!]
+\end{gather*}
+For \(s \in S^{(a)}\),
+\begin{align*}
+    M|_{\phi_{a}},s \models \phi_{d} 
+        &\iff \neg(\forall t \in \sim_{d}^{(a)}(s): t \in V^{(a)}(r_{d}))
+            \land \neg(\forall t \in \sim_{d}^{(a)}(s): t \in V^{(a)}(w_{d})) 
+                \tag{1.1(b4)}\label{eq:1.1(b4)}
+\end{align*}
+The restricted equivalence relation \(\sim_{d}^{(a)}\) is:
+\begin{align*}
+    \sim_{d}^{(a)}(rrr) &= \{ rrr,rwr \} = \sim_{d}^{(a)}(rwr) \\
+    \sim_{d}^{(a)}(wrr) &= \{ wrr,wwr \} = \sim_{d}^{(a)}(wwr) \\
+    \sim_{d}^{(a)}(wrw) &= \{ wrw \} \\
+    \sim_{d}^{(a)}(rrw) &= \{ rrw \} \tag{1.1(b5)}\label{eq:1.1(b5)}
+\end{align*}
+We observe:
+\begin{align*}
+    &\forall s \in S^{(a)} \setminus \{wrw,rrw\}:
+        \exists t_{1},t_{2} \in \sim^{(a)}_{d}(s):
+            t_{1} \not\in V^{(a)}(r_{d}) \land t_{2} \not\in V^{(a)}(w_{d}) \\
+    \iff &\forall s \in S^{(a)} \setminus \{wrw,rrw\}:
+        M,s \models \neg K_{d}r_{d} \land \neg K_{d}w_{d} \tag{1.1(b6)}\label{eq:1.1(b6)}
+\end{align*}
+Hence \( S^{(d)} = S^{(a)} \setminus \{wrw, rrw\}\).
+
+\paragraph{Intuitive verification:} Because there are only two white 
+hats, if Arunabh and Sabhya both had white hats (world \(wrw\)), 
+Dinu would know his hat is red. Similarly, if Arunabh has red and 
+Sabhya has white, the two possible worlds are \(\{rrw, rww\}\); 
+but \(rww\) was already eliminated, so Dinu would know his hat is red. 
+Therefore both \(wrw\) and \(rrw\) are eliminated after \(\phi_{d}\). 
+The remaining worlds survive because Dinu cannot deduce his hat color.
+
+\subsubsection*{(c)}
+
+\textbf{Initial Kripke Structure (Sabhya blindfolded):} 
+\( M = \langle S,\sim,V \rangle\) with the same set \(S\) and 
+valuations as in (b), but now Sabhya is blindfolded, 
+so he cannot distinguish any worlds:
+\begin{gather*}
+    S = \{ rrr, rrw, rwr, rww, wrr, wrw, wwr \} \\
+    \text{Agents} = \{a,d,s\} \\
+    \sim_{s} = S \times S \\
+    \text{(\(\sim_{a},\sim_{d}\) and V are as in (b).)}
+\end{gather*}
